@@ -1,23 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect  } from 'react';
 
 function TrelloItem (props){
 
-    const completedStyle = {
-        fontStyle: "italic",
-        color: "#cdcdcd",
-        textDecoration: "line-through"
-    }
-
     return (
         <div className="todo-item">
-            <input 
-                type="checkbox" 
-                checked={props.item.completed} 
-                onChange={() => props.handleChange(props.item.id)}
-            />
-            <p style={props.item.completed ? completedStyle: null}>{props.item.task}</p>
+            <p >{props.item}</p>
         </div>
-    )
+    );
 }
 
 export default TrelloItem;
