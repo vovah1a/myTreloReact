@@ -4,7 +4,7 @@ function TrelloItem (props){
 
     return (
         <div className="todo-item">
-            <p >{props.item}</p>
+            <p >{props.id}: {props.item}</p>
         </div>
     );
 }
