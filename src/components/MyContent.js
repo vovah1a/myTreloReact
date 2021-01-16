@@ -1,47 +1,47 @@
-import React, {useState } from 'react';
+import React, {useState, useRef } from 'react';
 import TrelloList from "./TrelloList"
 
 
 function MyContent () {
-    let newTrelo
-    let nam=0
+    let newTrelo= useRef(null);
     if(JSON.parse(localStorage.getItem('lists') === null)) {
         localStorage.setItem('lists',JSON.stringify([]))
     }
     const [treloDate, setStateTrelo]=useState(JSON.parse(localStorage.getItem('lists')))
 
     function updateTrelo() {
-        setStateTrelo(prev => {
-            return [...prev, newTrelo]
-        })
+        if(treloDate.indexOf(newTrelo.current.value) == -1) {
+            setStateTrelo(prev => {
+                return [...prev, newTrelo.current.value]
+            })
+        }   
+        else  {
+            alert(`Такой лист уже существует!!! \nПожалуйста, выберете другое имя. `)
+        }
     }
 
-    function setChenge (event){
-        newTrelo=event.target.value        
-    }
-
-    function handleClick(e) {
-        e.preventDefault();
-        updateTrelo()
+    function deletes (id){
+        localStorage.removeItem(id)
+        treloDate.splice(treloDate.indexOf(id),1)
+        localStorage.setItem('lists',JSON.stringify(treloDate))
     }
 
     localStorage.setItem('lists',JSON.stringify(treloDate))
-    let todoTrelo = treloDate.map(item => <TrelloList key={nam++} id={nam} item={item}/>);
+    let todoTrelo = treloDate.map(item => <TrelloList key={item} id={item} item={item} deletes={deletes}/>);
     return (
         <div>
-            <form onSubmit={handleClick} >
-                <input type="text" name="todo"  onChange={setChenge} placeholder="New list"/>  
-            
-                <button type="button" onClick={ e=>updateTrelo(e)}>
-                    Добавить
-                </button>   
+            <form onClick={(e)=> e.preventDefault()} >
+                <input type="text" ref={newTrelo} placeholder="New list"/>  
+                <button onClick={ e=>updateTrelo(e)}> Добавить</button>   
             </form>
-            <form onSubmit={()=>{localStorage.clear()}}>
-                <button onClick={ ()=>{localStorage.clear()}}>Очистить всё</button>
+
+            <form onClick={()=>{localStorage.clear()}}>
+                <button>Очистить всё</button>
             </form> 
-            <div>
-                {todoTrelo}
-            </div>
+            
+            <>
+            {todoTrelo}
+            </>
         </div>
     )
 }

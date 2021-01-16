@@ -1,48 +1,42 @@
-import React, {useState } from 'react';
+import React, {useState, useRef} from 'react';
 import TrelloItem from "./TrelloItem"
 
 function TrelloList(props) {
     const itemName= props.id.toString()
-    let newItem
+    const newItem = useRef(null);
     let nam=0
     if(JSON.parse(localStorage.getItem(itemName) === null)) {
         localStorage.setItem(itemName,JSON.stringify([]))
     }
     const [listDate, setState] = useState(JSON.parse(localStorage.getItem(itemName)))
-    
-    function updateItem() {
+
+    const onButtonClick = () => {
         setState(prev => {
-            return [...prev, newItem]
+            return [...prev, newItem.current.value]
         })
     }
-
-    function setChenge (event){
-        newItem=event.target.value        
-    }
-
-    function handleClick(e) {
-        e.preventDefault();
-        updateItem()
+    
+    function deletes (id){
+        listDate.splice(id,1)
+        localStorage.setItem(itemName,JSON.stringify(listDate))
     }
     
 
     localStorage.setItem(itemName,JSON.stringify(listDate))
-    let todoItems = listDate.map(item => <TrelloItem key={nam++} item={item} id={nam} stor={itemName}/>);
+    let todoItems = listDate.map(item => <TrelloItem key={nam++} item={item} id={nam} deletes={deletes}/>);
     return (
         <div>
             <h1>{props.item}</h1>
-            <form onSubmit={handleClick}>
-                <input type="text" name="todo"  onChange={setChenge} placeholder="New task"/>  
-            
-                <button type="button" onClick={ e=>updateItem(e)}>
-                    Добавить
-                </button>   
+            <form onClick={(e)=> e.preventDefault()}>
+                <input ref={newItem} type="text" placeholder="New task"/>
+                <button onClick={onButtonClick}>Добавить</button>
             </form>
             
             {todoItems} 
-            <form onSubmit={()=>{localStorage.removeItem(itemName)}}>
-                <button onClick={ ()=>{ localStorage.removeItem(itemName)}}>Очистить лист</button>
-            </form> 
+            <form onClick={()=>{props.deletes(itemName)}}>
+                <button>Очистить лист</button>
+            </form>
+            
         </div>
     )
 }
