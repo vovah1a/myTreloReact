@@ -11,9 +11,12 @@ function TrelloList(props) {
     const [listDate, setState] = useState(JSON.parse(localStorage.getItem(itemName)))
 
     const onButtonClick = () => {
-        setState(prev => {
-            return [...prev, newItem.current.value]
-        })
+        if(newItem.current.value != ""){
+            setState(prev => {
+                return [...prev, newItem.current.value]
+            })
+        }
+        else alert(`Нельзя создать такой таск!!! `)
     }
     
     function deletes (id){
@@ -25,7 +28,7 @@ function TrelloList(props) {
     localStorage.setItem(itemName,JSON.stringify(listDate))
     let todoItems = listDate.map(item => <TrelloItem key={nam++} item={item} id={nam} deletes={deletes}/>);
     return (
-        <div>
+        <div className="doList">
             <h1>{props.item}</h1>
             <form onClick={(e)=> e.preventDefault()}>
                 <input ref={newItem} type="text" placeholder="New task"/>
@@ -34,7 +37,7 @@ function TrelloList(props) {
             
             {todoItems} 
             <form onClick={()=>{props.deletes(itemName)}}>
-                <button>Очистить лист</button>
+                <button>Удалить лист</button>
             </form>
             
         </div>
